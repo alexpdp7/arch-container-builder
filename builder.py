@@ -68,14 +68,17 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
         return dest_zst
 
 
-def build_container(aur_packages, image):
+def build_container(packages, aur_packages, image):
     build_builder_container()
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir = pathlib.Path(temp_dir)
 
-        container_def = _("""
+        packages = " ".join(packages)
+
+        container_def = _(f"""
         FROM docker.io/library/archlinux:latest
+        RUN pacman -Sy {packages} --noconfirm
         """)
 
         package_files = []
