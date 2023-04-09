@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+import argparse
 import pathlib
 import shutil
 import subprocess
@@ -102,3 +105,16 @@ def build_container(packages, aur_packages, image):
              "-t", image,
              "-v", f"{temp_dir.absolute()}:/pkgs",
              "--security-opt", "label=disable",])
+
+
+def build_container_main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image")
+    parser.add_argument("--package", action="append")
+    parser.add_argument("--aur-package", action="append")
+    args = parser.parse_args()
+    build_container(args.package, args.aur_package, args.image)
+
+
+if __name__ == "__main__":
+    build_container_main()
