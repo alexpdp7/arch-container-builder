@@ -1,0 +1,6 @@
+FROM docker.io/library/archlinux:latest
+RUN mkdir /builder
+RUN useradd builder
+RUN chown builder:builder /builder
+RUN pacman -Sy fakeroot binutils --noconfirm
+USER builder
