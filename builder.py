@@ -85,15 +85,16 @@ def build_container(packages, aur_packages, image):
         """)
 
         package_files = []
-        for package in aur_packages:
+        for package in aur_packages or []:
             package_file = build_aur(package, temp_dir).name
             package_files.append(f"/pkgs/{package_file}")
 
-        package_files = " ".join(package_files)
+        if package_files:
+            package_files = " ".join(package_files)
 
-        container_def += _(f"""
-        RUN pacman -U {package_files} --noconfirm
-        """)
+            container_def += _(f"""
+            RUN pacman -U {package_files} --noconfirm
+            """)
 
         container_file_path = temp_dir / "Containerfile"
         with open(container_file_path, "w") as c:
