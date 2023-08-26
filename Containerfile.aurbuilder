@@ -1,4 +1,5 @@
 FROM docker.io/library/archlinux:latest
+RUN pacman -Syu --noconfirm
 RUN pacman -Sy fakeroot binutils sudo base-devel --noconfirm
 RUN echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel-no-passwd
 RUN mkdir /builder
