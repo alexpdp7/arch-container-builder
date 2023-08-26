@@ -82,7 +82,7 @@ def build_container(packages, aur_packages, image):
         packages = " ".join(packages)
 
         container_def = _(f"""
-        FROM docker.io/library/archlinux:latest
+        FROM quay.io/toolbx-images/archlinux-toolbox
         RUN pacman -Sy {packages} --noconfirm
         """)
 
