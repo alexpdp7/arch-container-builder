@@ -51,7 +51,9 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
                  "-v", f"{(temp_dir / name).absolute()}:/builder/{name}",
                  "-w", f"/builder/{name}",
                  "aurbuilder:latest",
-                 "makepkg"])
+                 "makepkg",
+                 "--syncdeps",
+                 "--noconfirm"])
 
         finally:
             _sp(["podman", "run",
