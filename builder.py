@@ -18,11 +18,25 @@ def _sp(args):
 def _(s):
     return textwrap.dedent(s).lstrip()
 
-def build_builder_container():
-    _sp(["podman", "build",
-        "--cap-add", "sys_chroot",
-        "-f", "Containerfile.aurbuilder",
-        "-t", "aurbuilder:latest"])
+def build_builder_container(trusted_key_ids):
+    with open("Containerfile.aurbuilder") as f:
+        container_def = f.read()
+
+    for trusted_key_id in trusted_key_ids or []:
+        container_def += _(f"""
+        RUN gpg --recv-key {trusted_key_id}
+        """)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir = pathlib.Path(temp_dir)
+        container_file_path = temp_dir / "Containerfile"
+        with open(container_file_path, "w") as f:
+            f.write(container_def)
+
+        _sp(["podman", "build",
+             "--cap-add", "sys_chroot",
+             "-f", container_file_path,
+             "-t", "aurbuilder:latest"])
 
 
 def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
@@ -73,8 +87,8 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
         return dest_zst
 
 
-def build_container(packages, aur_packages, image):
-    build_builder_container()
+def build_container(packages, aur_packages, image, trusted_key_ids):
+    build_builder_container(trusted_key_ids)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir = pathlib.Path(temp_dir)
@@ -118,8 +132,9 @@ def build_container_main():
     parser.add_argument("image")
     parser.add_argument("--package", action="append")
     parser.add_argument("--aur-package", action="append")
+    parser.add_argument("--trusted-key-id", action="append")
     args = parser.parse_args()
-    build_container(args.package, args.aur_package, args.image)
+    build_container(args.package, args.aur_package, args.image, args.trusted_key_id)
 
 
 if __name__ == "__main__":

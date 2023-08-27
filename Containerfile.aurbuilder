@@ -3,6 +3,6 @@ RUN pacman -Syu --noconfirm
 RUN pacman -Sy fakeroot binutils sudo base-devel --noconfirm
 RUN echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel-no-passwd
 RUN mkdir /builder
-RUN useradd builder -G wheel
+RUN useradd builder -G wheel -m
 RUN chown builder:builder /builder
 USER builder
