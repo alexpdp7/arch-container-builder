@@ -79,12 +79,15 @@ def build_container(packages, aur_packages, image):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir = pathlib.Path(temp_dir)
 
-        packages = " ".join(packages)
-
         container_def = _(f"""
         FROM quay.io/toolbx-images/archlinux-toolbox
-        RUN pacman -Sy {packages} --noconfirm
         """)
+
+        if packages:
+            packages = " ".join(packages)
+            container_def += _(f"""
+            RUN pacman -Sy {packages} --noconfirm
+            """)
 
         package_files = []
         for package in aur_packages or []:
