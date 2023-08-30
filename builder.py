@@ -95,6 +95,7 @@ def build_container(packages, aur_packages, image, trusted_key_ids):
 
         container_def = _(f"""
         FROM quay.io/toolbx-images/archlinux-toolbox
+        RUN pacman -Syu --noconfirm
         """)
 
         if packages:
