@@ -19,8 +19,7 @@ def _(s):
     return textwrap.dedent(s).lstrip()
 
 def build_builder_container(trusted_key_ids):
-    with open("Containerfile.aurbuilder") as f:
-        container_def = f.read()
+    container_def = pathlib.Path("Containerfile.aurbuilder").read_text()
 
     for trusted_key_id in trusted_key_ids or []:
         container_def += _(f"""
@@ -30,8 +29,7 @@ def build_builder_container(trusted_key_ids):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir = pathlib.Path(temp_dir)
         container_file_path = temp_dir / "Containerfile"
-        with open(container_file_path, "w") as f:
-            f.write(container_def)
+        container_file_path.write_text(container_def)
 
         _sp(["podman", "build",
              "--cap-add", "sys_chroot",
@@ -117,8 +115,7 @@ def build_container(packages, aur_packages, image, trusted_key_ids):
             """)
 
         container_file_path = temp_dir / "Containerfile"
-        with open(container_file_path, "w") as c:
-            c.write(container_def)
+        container_file_path.write_text(container_def)
 
         _sp(["podman", "build",
              "--cap-add", "sys_chroot",
