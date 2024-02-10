@@ -80,7 +80,7 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
                  "true"])
 
         generated_zsts = list((temp_dir / name).glob("*.zst"))
-        assert len(generated_zsts) == 1
+        assert len(generated_zsts) == 1, f"len({generated_zsts}) != 1"
         generated_zst = generated_zsts[0]
         dest_zst = dest / generated_zst.name
         shutil.copyfile(generated_zst, dest_zst)
