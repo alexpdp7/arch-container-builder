@@ -18,6 +18,7 @@ def _sp(args):
 def _(s):
     return textwrap.dedent(s).lstrip()
 
+
 def build_builder_container(trusted_key_ids):
     container_def = pathlib.Path("Containerfile.aurbuilder").read_text()
 
@@ -53,7 +54,7 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
                  "--security-opt", "label=disable",
                  "--rm",
                  "-v", f"{temp_dir.absolute()}:/builder/tmp:U",
-                 "-w", f"/builder/tmp",
+                 "-w", "/builder/tmp",
                  "aurbuilder:latest",
                  "tar", "-xzvf", "tarball"])
 
@@ -72,13 +73,13 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
                  "--security-opt", "label=disable",
                  "--rm",
                  "-v", f"{temp_dir.absolute()}:/builder/tmp:U",
-                 "-w", f"/builder/tmp",
+                 "-w", "/builder/tmp",
                  "-u", "root",
                  "aurbuilder:latest",
                  "true"])
 
         generated_zsts = [pkg for pkg in (temp_dir / name).glob(f"{name}-*.pkg.tar.zst") if not pkg.match(f"{name}-debug-*.pkg.tar.zst")]
-        assert len(generated_zsts) == 1, f"len({generated_zsts}) != 1, {sorted((temp_dir / name).glob("*"))}"
+        assert len(generated_zsts) == 1, f"len({generated_zsts}) != 1, {sorted((temp_dir / name).glob('*'))}"
         generated_zst = generated_zsts[0]
         dest_zst = dest / generated_zst.name
         shutil.copyfile(generated_zst, dest_zst)
@@ -91,7 +92,7 @@ def build_container(packages, aur_packages, image, trusted_key_ids):
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_dir = pathlib.Path(temp_dir)
 
-        container_def = _(f"""
+        container_def = _("""
         FROM quay.io/toolbx-images/archlinux-toolbox
         RUN pacman -Syu --noconfirm
         """)
