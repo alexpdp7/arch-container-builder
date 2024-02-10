@@ -77,8 +77,8 @@ def build_aur(name: str, dest: pathlib.Path) -> pathlib.Path:
                  "aurbuilder:latest",
                  "true"])
 
-        generated_zsts = list((temp_dir / name).glob("*.zst"))
-        assert len(generated_zsts) == 1, f"len({generated_zsts}) != 1"
+        generated_zsts = [pkg for pkg in (temp_dir / name).glob(f"{name}-*.pkg.tar.zst") if not pkg.match(f"{name}-debug-*.pkg.tar.zst")]
+        assert len(generated_zsts) == 1, f"len({generated_zsts}) != 1, {sorted((temp_dir / name).glob("*"))}"
         generated_zst = generated_zsts[0]
         dest_zst = dest / generated_zst.name
         shutil.copyfile(generated_zst, dest_zst)
